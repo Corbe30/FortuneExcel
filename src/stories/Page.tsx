@@ -2,7 +2,7 @@ import React from "react";
 import { Workbook } from "@fortune-sheet/react";
 import "@fortune-sheet/react/dist/index.css";
 import { exportToolBarItem, importToolBarItem } from "@corbe30/fortune-excel";
-import { ImportHelper } from "@corbe30/fortune-excel";
+import { FortuneExcelHelper } from "@corbe30/fortune-excel";
 
 export const Page = () => {
   const [key, setKey] = React.useState(0);
@@ -18,7 +18,15 @@ export const Page = () => {
         height: "100vh",
       }}
     >
-      <ImportHelper setKey={setKey} setSheets={setSheets} sheetRef={sheetRef} />
+      <FortuneExcelHelper
+        setKey={setKey}
+        setSheets={setSheets}
+        sheetRef={sheetRef}
+        config={{
+          import: { xlsx: false, csv: true },
+          export: { xlsx: true, csv: false },
+        }}
+      />
       <Workbook
         key={key}
         data={sheets}

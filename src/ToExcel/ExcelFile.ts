@@ -6,10 +6,12 @@ import { setImages } from "./ExcelImage";
 import { setBorder } from "./ExcelBorder";
 import { setDataValidations } from "./ExcelValidation";
 import { setHiddenRowCol } from "./ExcelConfig";
+import { IFileType } from "../common/ICommon";
 
 
 export async function exportSheetExcel(
-  luckysheetRef: any
+  luckysheetRef: any,
+  fileType: IFileType
 ) {
   const luckysheet = luckysheetRef.getAllSheets();
   const workbook = new ExcelJS.Workbook();
@@ -24,7 +26,15 @@ export async function exportSheetExcel(
     setHiddenRowCol(table, worksheet);
     return true;
   });
-  const buffer = await workbook.xlsx.writeBuffer();
-  const fileData = new Blob([buffer]);
-  fileSaver.saveAs(fileData, `${luckysheetRef.getSheet().name}.xlsx`);
+
+  let fileData;
+  if (fileType === IFileType.CSV) {
+    const buffer = await workbook.csv.writeBuffer();
+    fileData = new Blob([buffer]);
+  } else {
+    const buffer = await workbook.xlsx.writeBuffer();
+    fileData = new Blob([buffer]);
+  }
+
+  fileSaver.saveAs(fileData, `${luckysheetRef.getSheet().name}.${fileType}`);
 }

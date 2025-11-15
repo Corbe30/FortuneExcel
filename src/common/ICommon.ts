@@ -39,3 +39,8 @@ export interface IBorderInfo {
 export interface IBorderInfoCompute {
   [key: string]: IBorderInfo;
 }
+
+export enum IFileType {
+  CSV = "csv",
+  XLSX = "xlsx",
+}
