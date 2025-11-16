@@ -1,14 +1,16 @@
+import React from "react";
 import ExportIcon from "../icons/ExportIcon";
 import ImportIcon from "../icons/ImportIcon";
-import { transformFortuneToExcel } from "./Transform";
 
 export const exportToolBarItem = (sheetRef:any) => {
   return {
     key: "export",
-    tooltip: "Export .xlsx",
+    tooltip: "Export ...",
     icon: ExportIcon(),
     onClick: async (e:any) => {
-      await transformFortuneToExcel(sheetRef.current);
+      const exportHelper = document.querySelector(".export-helper") as HTMLElement;
+      const visibility = exportHelper?.style.visibility;
+      exportHelper.style.visibility = visibility === "visible" ? "hidden" : "visible";
     },
   };
 };
@@ -16,7 +18,7 @@ export const exportToolBarItem = (sheetRef:any) => {
 export const importToolBarItem = () => {
   return {
     key: "import",
-    tooltip: "Import .xlsx",
+    tooltip: "Import file",
     icon: ImportIcon(),
     onClick: (e:any) => {
       document.getElementById("ImportHelper")?.click();
