@@ -46,7 +46,7 @@ You can check the example in [Storybook](https://github.com/Corbe30/FortuneExcel
           />
           <Workbook
             key={key} data={sheets} ref={workbookRef}
-            customToolbarItems={[importToolBarItem(), exportToolBarItem(workbookRef)]}
+            customToolbarItems={[importToolBarItem(), exportToolBarItem()]}
           />
         </>
       );

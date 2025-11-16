@@ -2,7 +2,7 @@ import React from "react";
 import ExportIcon from "../icons/ExportIcon";
 import ImportIcon from "../icons/ImportIcon";
 
-export const exportToolBarItem = (sheetRef:any) => {
+export const exportToolBarItem = () => {
   return {
     key: "export",
     tooltip: "Export ...",

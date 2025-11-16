@@ -23,7 +23,7 @@ export const Page = () => {
         setSheets={setSheets}
         sheetRef={sheetRef}
         config={{
-          import: { xlsx: false, csv: true },
+          import: { xlsx: true, csv: true },
           export: { xlsx: true, csv: true },
         }}
       />
@@ -31,7 +31,7 @@ export const Page = () => {
         key={key}
         data={sheets}
         ref={sheetRef}
-        customToolbarItems={[importToolBarItem(), exportToolBarItem(sheetRef)]}
+        customToolbarItems={[importToolBarItem(), exportToolBarItem()]}
       />
     </div>
   );
