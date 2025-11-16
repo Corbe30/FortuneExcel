@@ -2,7 +2,7 @@
   <img align="center" src="fortuneExcelLogo.png" width="150px" height="150px" />
 </p>
 <h1 align="center">FortuneExcel</h1>
-<p align="center">FortuneExcel is an .xlsx import/export plugin for FortuneSheet.</p>
+<p align="center">FortuneExcel is an .xlsx and .csv import/export plugin for FortuneSheet / ProsperaSheet.</p>
 
 <div align="center">
 
@@ -16,34 +16,42 @@
 
 ## Usage
 
-For best results, import and export a single sheet at a time. Although you can force FortuneExcel to handle multiple sheets, certain configurations may break.
+You can check the example in [Storybook](https://github.com/Corbe30/FortuneExcel/blob/main/src/stories/Page.tsx).
 
 1. Install the package:
-```js
-npm i @corbe30/fortune-excel
-```
+    ```js
+    npm i @corbe30/fortune-excel
+    ```
 
 2. Add import/export toolbar item in fortune-sheet
-> `<ImportHelper />` is a hidden component and only required when using `importToolBarItem()`.
-```js
-import { ImportHelper, importToolBarItem, exportToolBarItem } from "@corbe30/fortune-excel";
+    > `<FortuneExcelHelper />` is a hidden component.
+    ```js
+    import { FortuneExcelHelper, importToolBarItem, exportToolBarItem } from "@corbe30/fortune-excel";
 
-function App() {
-  const workbookRef = useRef();
-  const [key, setKey] = useState(0);
-  const [sheets, setSheets] = useState(data);
+    function App() {
+      const workbookRef = useRef();
+      const [key, setKey] = useState(0);
+      const [sheets, setSheets] = useState(data);
 
-  return (
-    <>
-      <ImportHelper setKey={setKey} setSheets={setSheets} sheetRef={workbookRef} />
-      <Workbook
-        key={key} data={sheets} ref={workbookRef}
-        customToolbarItems={[exportToolBarItem(workbookRef), importToolBarItem()]}
-      />
-    </>
-  );
-}
-```
+      return (
+        <>
+          <FortuneExcelHelper
+            setKey={setKey}
+            setSheets={setSheets}
+            sheetRef={sheetRef}
+            config={{
+              import: { xlsx: true, csv: true },
+              export: { xlsx: true, csv: true },
+            }}
+          />
+          <Workbook
+            key={key} data={sheets} ref={workbookRef}
+            customToolbarItems={[importToolBarItem(), exportToolBarItem(workbookRef)]}
+          />
+        </>
+      );
+    }
+    ```
 
 ## Authors and acknowledgment
 
@@ -60,11 +68,10 @@ Export support:
 - [Orleans9](https://blog.csdn.net/zinchliang) - [article](https://blog.csdn.net/zinchliang/article/details/120262185)
 
 ## Contribution
-1. node v20.17.0
-2. Use npm and not yarn
-3. npm run prepare
-4. npm run build-storybook
-5. npm run storybook
+1. Install node v20.17.0
+3. `npm run prepare`
+4. `npm run build-storybook`
+5. `npm run storybook`
 
 ## License
 

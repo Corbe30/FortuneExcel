@@ -24,7 +24,7 @@ export const Page = () => {
         sheetRef={sheetRef}
         config={{
           import: { xlsx: false, csv: true },
-          export: { xlsx: true, csv: false },
+          export: { xlsx: true, csv: true },
         }}
       />
       <Workbook
