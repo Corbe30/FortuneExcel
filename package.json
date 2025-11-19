@@ -3,7 +3,7 @@
   "workspaces": [
     "src/*"
   ],
-  "version": "2.1.1",
+  "version": "2.1.2",
   "description": "An Excel import/export import library for FortuneSheet",
   "main": "dist/main.js",
   "types": "dist/main.d.ts",
@@ -32,10 +32,8 @@
     "@storybook/react-webpack5": "^7.3.2",
     "@storybook/test": "^7.6.12",
     "@types/node": "^20.11.16",
-    "copyfiles": "^2.4.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "rimraf": "^6.1.0",
     "storybook": "^7.6.16",
     "tsconfig-paths-webpack-plugin": "^4.0.0",
     "typescript": "^5.3.3"
@@ -49,9 +47,6 @@
   },
   "scripts": {
     "prepare": "tsc",
-    "clean": "rimraf dist/",
-    "copy-files": "copyfiles -u 1 src/**/*.html src/**/*.css dist/",
-    "build": "npm run clean && tsc && npm run copy-files",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
   }
