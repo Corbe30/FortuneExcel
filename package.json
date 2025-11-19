@@ -49,9 +49,6 @@
   },
   "scripts": {
     "prepare": "tsc",
-    "clean": "rimraf dist/",
-    "copy-files": "copyfiles -u 1 src/**/*.html src/**/*.css dist/",
-    "build": "npm run clean && tsc && npm run copy-files",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
   }
