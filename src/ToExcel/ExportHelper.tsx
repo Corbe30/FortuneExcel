@@ -63,7 +63,7 @@ export const ExportHelper: React.FC<ExportHelperProps> = (props) => {
     if (exportHelper) exportHelper.style.visibility = "hidden";
   };
   const onClick = (fileType: IFileType) => {
-    transformFortuneToExcel(sheetRef.current, fileType);
+    transformFortuneToExcel(sheetRef.current, fileType, true);
     onMouseLeave();
   };
 

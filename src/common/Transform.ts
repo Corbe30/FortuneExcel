@@ -60,7 +60,9 @@ export const transformExcelToFortune = async (
 
 export const transformFortuneToExcel = async (
     luckysheetRef: any,
-    fileType: IFileType
+    fileType: IFileType = IFileType.XLSX,
+    download: boolean = true
 ) => {
-    await exportSheetExcel(luckysheetRef, fileType);
+    const result = await exportSheetExcel(luckysheetRef, fileType, download);
+    return result;
 };

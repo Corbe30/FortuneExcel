@@ -11,7 +11,8 @@ import { IFileType } from "../common/ICommon";
 
 export async function exportSheetExcel(
   luckysheetRef: any,
-  fileType: IFileType
+  fileType: IFileType,
+  download: boolean = true
 ) {
   const luckysheet = luckysheetRef.getAllSheets();
   const workbook = new ExcelJS.Workbook();
@@ -35,6 +36,7 @@ export async function exportSheetExcel(
     const buffer = await workbook.xlsx.writeBuffer();
     fileData = new Blob([buffer]);
   }
-
-  fileSaver.saveAs(fileData, `${luckysheetRef.getSheet().name}.${fileType}`);
+  if (download)
+    fileSaver.saveAs(fileData, `${luckysheetRef.getSheet().name}.${fileType}`);
+  return fileData;
 }

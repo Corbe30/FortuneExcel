@@ -1,13 +1,26 @@
 import React from "react";
 import { Workbook } from "@fortune-sheet/react";
 import "@fortune-sheet/react/dist/index.css";
-import { exportToolBarItem, importToolBarItem } from "@corbe30/fortune-excel";
-import { FortuneExcelHelper } from "@corbe30/fortune-excel";
+import {
+  exportToolBarItem,
+  importToolBarItem,
+  FortuneExcelHelper,
+  transformFortuneToExcel,
+} from "@corbe30/fortune-excel";
 
 export const Page = () => {
   const [key, setKey] = React.useState(0);
   const [sheets, setSheets] = React.useState([{ name: "Sheet1" }]);
   const sheetRef = React.useRef(null);
+
+  const manualExport = async () => {
+    const exportedFile = await transformFortuneToExcel(
+      sheetRef.current,
+      "xlsx",
+      true
+    );
+    console.log("Exported file data:", exportedFile);
+  };
 
   return (
     <div
@@ -18,6 +31,7 @@ export const Page = () => {
         height: "100vh",
       }}
     >
+      <button onClick={manualExport}>Try Manual Export!</button>
       <FortuneExcelHelper
         setKey={setKey}
         setSheets={setSheets}
