@@ -3,7 +3,7 @@
   "workspaces": [
     "src/*"
   ],
-  "version": "2.2.2",
+  "version": "2.2.3",
   "description": "An Excel import/export import library for FortuneSheet",
   "main": "dist/main.js",
   "types": "dist/main.d.ts",
