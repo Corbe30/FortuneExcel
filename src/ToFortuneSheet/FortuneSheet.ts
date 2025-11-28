@@ -816,8 +816,8 @@ export class FortuneSheet extends FortuneSheetBase {
         _address = getXmlAttibute(attrList, "location", null),
         _tooltip = getXmlAttibute(attrList, "tooltip", null);
       let _type: IfortunesheetHyperlinkType = _address
-        ? "internal"
-        : "external";
+        ? "cellrange"
+        : "webpage";
 
       // external hyperlink
       if (!_address) {
@@ -834,9 +834,12 @@ export class FortuneSheet extends FortuneSheetBase {
 
         if (findRid) {
           _address = findRid.attributeList["Target"];
-          _type = findRid.attributeList[
+          const type = findRid.attributeList[
             "TargetMode"
-          ]?.toLocaleLowerCase() as IfortunesheetHyperlinkType;
+          ]?.toLocaleLowerCase();
+          if (type === "external") {
+            _type = "webpage";
+          }
         }
       }
 
