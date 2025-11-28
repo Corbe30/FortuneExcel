@@ -381,4 +381,4 @@ export interface IfortunesheetHyperlinkValue {
   display: string;
 }
 
-export type IfortunesheetHyperlinkType = "internal" | "external";
+export type IfortunesheetHyperlinkType = "webpage" | "cellrange" | "sheet";
