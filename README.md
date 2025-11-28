@@ -53,6 +53,22 @@ You can check the example in [Storybook](https://github.com/Corbe30/FortuneExcel
     }
     ```
 
+3. You can programmatically import/export as well:
+    ```js
+    import { transformFortuneToExcel } from "@corbe30/fortune-excel";
+
+    const manualExport = async () => {
+      const exportedFile = await transformFortuneToExcel(
+        sheetRef.current,
+        "xlsx", // or "csv"; default = "xlsx"
+        true // if you want to start automatic download; default = true
+      );
+      console.log("Exported file data:", exportedFile);
+    };
+
+    <button onClick={manualExport}>Try Manual Export!</button>
+    ```
+
 ## Authors and acknowledgment
 
 - [@Corbe30](https://github.com/Corbe30)
