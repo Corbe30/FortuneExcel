@@ -101,7 +101,7 @@ export class FortuneSheetCelldataValue implements IfortuneSheetCelldataValue {
   ht: number | undefined; //Horizontal alignment,0 center, 1 left, 2 right, alignment
   mc: IfortuneSheetCelldataValueMerge | undefined; //Merge Cells, mergeCells
   tr: number | undefined; //Text rotation,0: 0、3 Vertical text alignment
-  tb: number | undefined; //Text wrap,0 truncation, 1 overflow, 2 word wrap, alignment
+  tb: string | undefined; //Text wrap,0 truncation, 1 overflow, 2 word wrap, alignment
   v: string | undefined; //Original value, v
   m: string | undefined; //Display value, v
   f: string | undefined; //formula, f
