@@ -480,7 +480,7 @@ export class FortuneFile {
     FortuneOutPutFile.sheets = [];
 
     for (const sheet of this.sheets!) {
-      const sheetout:any = {};
+      const sheetout: any = {};
       //let attrName = ["name","color","config","index","status","order","row","column","luckysheet_select_save","scrollLeft","scrollTop","zoomRatio","showGridLines","defaultColWidth","defaultRowHeight","celldata","chart","isPivotTable","pivotTable","luckysheet_conditionformat_save","freezen","calcChain"];
 
       if (sheet.name != null) {
@@ -571,6 +571,22 @@ export class FortuneFile {
             if (merges.has(r + "_" + c)) {
               v.mc = merges.get(r + "_" + c);
               if (v.mc.r !== r || v.mc.c !== c) v = { mc: v.mc };
+            } else {
+              for (const key in sheet.config.merge) {
+                if (sheet.config.merge.hasOwnProperty(key)) {
+                  const range = sheet.config.merge[key];
+                  if (
+                    r >= range.r &&
+                    r < range.r + range.rs &&
+                    c >= range.c &&
+                    c < range.c + range.cs
+                  ) {
+                    v.mc = { r: range.r, c: range.c };
+                    if (v.mc.r !== r || v.mc.c !== c) v = { mc: v.mc };
+                    break;
+                  }
+                }
+              }
             }
           }
           sheetout.celldata.push({ r, c, v });

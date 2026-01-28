@@ -1,8 +1,5 @@
 import {
   IfortuneSheetborderInfoCellForImp,
-  IfortuneSheetCelldataValue,
-  IfortuneSheetCelldataValueMerge,
-  IFortuneSheetCellFormat,
 } from "./IFortune";
 import {
   ReadXml,
@@ -12,24 +9,18 @@ import {
   getlineStringAttr,
 } from "./ReadXml";
 import {
-  getXmlAttibute,
-  getColumnWidthPixel,
-  getRowHeightPixel,
   getcellrange,
   escapeCharacter,
   isChinese,
   isJapanese,
   isKoera,
-  isContainMultiType,
 } from "../common/method";
 import {
   ST_CellType,
-  indexedColors,
-  OEM_CHARSET,
   borderTypes,
   fontFamilys,
 } from "../common/constant";
-import { IattributeList, stringToNum } from "../common/ICommon";
+import { IattributeList } from "../common/ICommon";
 import {
   FortuneSheetborderInfoCellValueStyle,
   FortuneSheetborderInfoCellForImp,
@@ -401,12 +392,12 @@ export class FortuneSheetCelldata extends FortuneSheetCelldataBase {
 
       if (wrapText != undefined) {
         if (wrapText == "1") {
-          cellValue.tb = 2;
+          cellValue.tb = "2";
         } else {
-          cellValue.tb = 1;
+          cellValue.tb = "1";
         }
       } else {
-        cellValue.tb = 1;
+        cellValue.tb = "1";
       }
 
       if (textRotation != undefined) {
@@ -510,7 +501,7 @@ export class FortuneSheetCelldata extends FortuneSheetCelldataBase {
         }
       }
     } else {
-      cellValue.tb = 1;
+      cellValue.tb = "1";
     }
 
     if (v != null) {

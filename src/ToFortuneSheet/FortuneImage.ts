@@ -1,17 +1,6 @@
-import { IfortuneImage } from "./IFortune";
-import { FortuneSheetCelldata } from "./FortuneCell";
 import { IuploadfileList, IattributeList } from "../common/ICommon";
-import {
-  getXmlAttibute,
-  getColumnWidthPixel,
-  fromulaRef,
-  getRowHeightPixel,
-  getcellrange,
-} from "../common/method";
-import { borderTypes } from "../common/constant";
-import { ReadXml, IStyleCollections, Element, getColor } from "./ReadXml";
 import { FortuneImageBase } from "./FortuneBase";
-import { UDOC, FromEMF, ToContext2D } from "../common/emf";
+import { FromEMF, ToContext2D } from "../common/emf";
 
 export class ImageList {
   private images: IattributeList;

@@ -166,7 +166,7 @@ export interface IfortuneSheetCelldataValue {
   ht: number | undefined; //Horizontal alignment,0 center, 1 left, 2 right
   mc: IfortuneSheetCelldataValueMerge | undefined; //Merge Cells
   tr: number | undefined; //Text rotation,0: 0、1: 45 、2: -45、3 Vertical text、4: 90 、5: -90
-  tb: number | undefined; //Text wrap,0 truncation, 1 overflow, 2 word wrap
+  tb: string | undefined; //Text wrap,0 truncation, 1 overflow, 2 word wrap
   v: string | undefined; //Original value
   m: string | undefined; //Display value
   rt: number | undefined; //text rotation angle 0-180 alignment

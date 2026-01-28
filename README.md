@@ -39,7 +39,7 @@ You can check the example in [Storybook](https://github.com/Corbe30/FortuneExcel
             setKey={setKey}
             setSheets={setSheets}
             sheetRef={sheetRef}
-            config={{
+            config={{ // this is the default config object
               import: { xlsx: true, csv: true },
               export: { xlsx: true, csv: true },
             }}
