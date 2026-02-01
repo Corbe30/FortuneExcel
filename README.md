@@ -7,16 +7,22 @@
 <div align="center">
 
 <p>
-<a href="http://npmjs.com/package/@corbe30/fortune-excel" alt="fortuneExcel on npm">
-<img src="https://img.shields.io/npm/v/@corbe30/fortune-excel" /></a> <a href="http://npmjs.com/package/@corbe30/fortune-excel" alt="fortuneExcel downloads">
-<img src="https://img.shields.io/npm/d18m/%40corbe30%2Ffortune-excel" /></a>
+  <a href="http://npmjs.com/package/@corbe30/fortune-excel" alt="fortuneExcel on npm">
+    <img src="https://img.shields.io/npm/v/@corbe30/fortune-excel" />
+  </a> 
+  <a href="http://npmjs.com/package/@corbe30/fortune-excel" alt="fortuneExcel downloads">
+    <img src="https://img.shields.io/npm/d18m/%40corbe30%2Ffortune-excel" />
+  </a>
+  <a href="https://corbe30.github.io/FortuneExcel/" alt="fortuneExcel storybok">
+    <img src="https://img.shields.io/badge/storybook-FF4785" />
+  </a>
 </p>
 
 </div>
 
 ## Usage
 
-You can check the example in [Storybook](https://github.com/Corbe30/FortuneExcel/blob/main/src/stories/Page.tsx).
+Check the live Storybook code [here](https://github.com/Corbe30/FortuneExcel/blob/main/src/stories/Page.tsx).
 
 1. Install the package:
     ```js
@@ -24,12 +30,12 @@ You can check the example in [Storybook](https://github.com/Corbe30/FortuneExcel
     ```
 
 2. Add import/export toolbar item in fortune-sheet
-    > `<FortuneExcelHelper />` is a hidden component.
+    > Note: `<FortuneExcelHelper />` is a hidden component.
     ```js
     import { FortuneExcelHelper, importToolBarItem, exportToolBarItem } from "@corbe30/fortune-excel";
 
     function App() {
-      const workbookRef = useRef();
+      const sheetRef = useRef();
       const [key, setKey] = useState(0);
       const [sheets, setSheets] = useState(data);
 
@@ -39,13 +45,13 @@ You can check the example in [Storybook](https://github.com/Corbe30/FortuneExcel
             setKey={setKey}
             setSheets={setSheets}
             sheetRef={sheetRef}
-            config={{ // this is the default config object
+            config={{ // default = all values are true
               import: { xlsx: true, csv: true },
               export: { xlsx: true, csv: true },
             }}
           />
           <Workbook
-            key={key} data={sheets} ref={workbookRef}
+            key={key} data={sheets} ref={sheetRef}
             customToolbarItems={[importToolBarItem(), exportToolBarItem()]}
           />
         </>
@@ -61,7 +67,7 @@ You can check the example in [Storybook](https://github.com/Corbe30/FortuneExcel
       const exportedFile = await transformFortuneToExcel(
         sheetRef.current,
         "xlsx", // or "csv"; default = "xlsx"
-        true // if you want to start automatic download; default = true
+        true // start automatic download; default = true
       );
       console.log("Exported file data:", exportedFile);
     };
