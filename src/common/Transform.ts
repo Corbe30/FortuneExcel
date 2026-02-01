@@ -21,12 +21,11 @@ const convertCsvToExcel = async (file: File): Promise<ArrayBuffer> => {
 }
 
 export const transformExcelToFortune = async (
-    e: any,
+    file: any,
     setSheets: any,
     setKey: any,
     sheetRef: any
 ) => {
-    const file = e.target.files[0];
     let excelFile: ArrayBuffer;
     let fileName: string = file.name;
 
@@ -52,8 +51,8 @@ export const transformExcelToFortune = async (
     setTimeout(() => {
         for (let sheet of lsh.sheets) {
             let config = sheet.config;
-            sheetRef.current?.setColumnWidth(config?.columnlen || {}, { id: sheet.id });
-            sheetRef.current?.setRowHeight(config?.rowlen || {}, { id: sheet.id });
+            sheetRef.setColumnWidth(config?.columnlen || {}, { id: sheet.id });
+            sheetRef.setRowHeight(config?.rowlen || {}, { id: sheet.id });
         }
     }, 1);
 };

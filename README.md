@@ -22,14 +22,12 @@
 
 ## Usage
 
-Check the live Storybook code [here](https://github.com/Corbe30/FortuneExcel/blob/main/src/stories/Page.tsx).
-
 1. Install the package:
     ```js
     npm i @corbe30/fortune-excel
     ```
 
-2. Add import/export toolbar item in fortune-sheet
+2. Import/export toolbar item ([code example](https://github.com/Corbe30/FortuneExcel/tree/main/src/stories/Plugin.tsx))
     > Note: `<FortuneExcelHelper />` is a hidden component.
     ```js
     import { FortuneExcelHelper, importToolBarItem, exportToolBarItem } from "@corbe30/fortune-excel";
@@ -59,7 +57,7 @@ Check the live Storybook code [here](https://github.com/Corbe30/FortuneExcel/blo
     }
     ```
 
-3. You can programmatically import/export as well:
+3. Programmatic import/export ([code example](https://github.com/Corbe30/FortuneExcel/tree/main/src/stories/Manual.tsx))
     ```js
     import { transformFortuneToExcel } from "@corbe30/fortune-excel";
 
@@ -72,7 +70,19 @@ Check the live Storybook code [here](https://github.com/Corbe30/FortuneExcel/blo
       console.log("Exported file data:", exportedFile);
     };
 
-    <button onClick={manualExport}>Try Manual Export!</button>
+    <button onClick={manualExport}>Export</button>
+    ```
+    ```js
+    import { transformExcelToFortune } from "@corbe30/fortune-excel";
+     
+    const manualImport = async (event) => {
+      await transformExcelToFortune(
+        event.target.files[0], // file type (csv/xlsx) is automatically identified
+        setSheets,
+        setKey,
+        sheetRef.current
+      )
+    }
     ```
 
 ## Authors and acknowledgment

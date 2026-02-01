@@ -1,13 +1,19 @@
-import { Page } from "./Page.tsx";
+import { PluginExample } from "./Plugin.tsx";
+import { ManualExample } from "./Manual.tsx";
 
 const meta = {
-  title: "Example/FortuneSheet",
-  component: Page,
+  title: "Example/FortuneExcel",
   parameters: {
     layout: "fullscreen",
+    options: { showPanel: false } 
   },
 };
 
 export default meta;
 
-export const Importer = {};
+export const plugin = () => {
+  return PluginExample();
+};
+export const manual = () => {
+  return ManualExample();
+};

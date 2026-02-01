@@ -10,7 +10,7 @@ export const ImportHelper = (props: any) => {
       id="ImportHelper"
       accept={acceptTypes}
       onChange={async (e) => {
-        await transformExcelToFortune(e, setSheets, setKey, sheetRef);
+        await transformExcelToFortune(e?.target?.files?.[0], setSheets, setKey, sheetRef.current);
       }}
       hidden
     />
