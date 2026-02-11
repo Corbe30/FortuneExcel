@@ -13,7 +13,7 @@ export class ImageList {
       // let reg = new RegExp("xl/media/image1.png", "g");
       if (fileKey.indexOf("xl/media/") > -1) {
         let fileNameArr = fileKey.split(".");
-        let suffix = fileNameArr[fileNameArr.length - 1].toLowerCase();
+        let suffix = fileNameArr[fileNameArr.length - 1]?.toLowerCase();
         if (
           suffix in
           { png: 1, jpeg: 1, jpg: 1, gif: 1, bmp: 1, tif: 1, webp: 1, emf: 1 }
