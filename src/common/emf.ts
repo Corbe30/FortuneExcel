@@ -1299,7 +1299,7 @@ ToContext2D.prototype._setStyle = function (gst: any, ctx: any) {
   ctx.miterLimit = gst.mlimit * scl;
 
   var fn = gst.font.Tf,
-    ln = fn.toLowerCase();
+    ln = fn?.toLowerCase() || "";
   var p0 = ln.indexOf("bold") != -1 ? "bold " : "";
   var p1 =
     ln.indexOf("italic") != -1 || ln.indexOf("oblique") != -1 ? "italic " : "";

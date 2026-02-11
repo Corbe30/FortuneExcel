@@ -15,7 +15,7 @@ export class HandleZip {
     for (const [_path, zipEntry] of Object.entries(zip.files)) {
       const fileName = zipEntry.name;
       const fileNameArr = fileName.split(".");
-      const suffix = fileNameArr[fileNameArr.length - 1].toLowerCase();
+      const suffix = fileNameArr[fileNameArr.length - 1]?.toLowerCase();
       let fileType: JSZip.OutputType = "string";
       if (
         suffix in

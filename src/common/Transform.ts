@@ -30,7 +30,7 @@ export const transformExcelToFortune = async (
     let fileName: string = file.name;
 
     // check if the file is CSV
-    if (file.type === 'text/csv' || file.name.toLowerCase().endsWith('.csv')) {
+    if (file.type === 'text/csv' || file?.name?.toLowerCase()?.endsWith('.csv')) {
         // convert CSV to xlsx
         excelFile = await convertCsvToExcel(file);
         fileName = file.name.replace(/\.csv$/i, '.xlsx');
