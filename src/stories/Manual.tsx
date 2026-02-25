@@ -52,7 +52,7 @@ export const ManualExample = () => {
 
   const manualExport = async () => {
     const exportedFile = await transformFortuneToExcel(
-      sheetRef.current,
+      sheetRef,
       "xlsx",
       true,
     );
