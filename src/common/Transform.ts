@@ -51,8 +51,8 @@ export const transformExcelToFortune = async (
     setTimeout(() => {
         for (let sheet of lsh.sheets) {
             let config = sheet.config;
-            sheetRef.setColumnWidth(config?.columnlen || {}, { id: sheet.id });
-            sheetRef.setRowHeight(config?.rowlen || {}, { id: sheet.id });
+            sheetRef?.current?.setColumnWidth?.(config?.columnlen || {}, { id: sheet.id });
+            sheetRef?.current?.setRowHeight?.(config?.rowlen || {}, { id: sheet.id });
         }
     }, 1);
 };

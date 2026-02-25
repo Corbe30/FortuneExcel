@@ -80,7 +80,7 @@
         event.target.files[0], // file type (csv/xlsx) is automatically identified
         setSheets,
         setKey,
-        sheetRef.current
+        sheetRef
       )
     }
     ```
