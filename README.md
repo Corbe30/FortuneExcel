@@ -63,7 +63,7 @@
 
     const manualExport = async () => {
       const exportedFile = await transformFortuneToExcel(
-        sheetRef.current,
+        sheetRef,
         "xlsx", // or "csv"; default = "xlsx"
         true // start automatic download; default = true
       );

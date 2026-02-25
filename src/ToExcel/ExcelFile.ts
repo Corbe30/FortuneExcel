@@ -14,7 +14,7 @@ export async function exportSheetExcel(
   fileType: IFileType,
   download: boolean = true
 ) {
-  const luckysheet = luckysheetRef.getAllSheets();
+  const luckysheet = luckysheetRef.current.getAllSheets();
   const workbook = new ExcelJS.Workbook();
   luckysheet.every(function (table: any) {
     if (table?.data?.length === 0) return true;
@@ -37,6 +37,6 @@ export async function exportSheetExcel(
     fileData = new Blob([buffer]);
   }
   if (download)
-    fileSaver.saveAs(fileData, `${luckysheetRef.getSheet().name}.${fileType}`);
+    fileSaver.saveAs(fileData, `${luckysheetRef.current.getSheet().name}.${fileType}`);
   return fileData;
 }
