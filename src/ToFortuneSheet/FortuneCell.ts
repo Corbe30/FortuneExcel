@@ -841,7 +841,7 @@ export class FortuneSheetCelldata extends FortuneSheetCelldataBase {
       }
       // to be confirmed
       else if (t == ST_CellType["InlineString"] && v != null) {
-        cellValue.v = "'" + value;
+        cellValue.v = `${value}`;
       } else {
         value = escapeCharacter(value);
         cellValue.v = value;
