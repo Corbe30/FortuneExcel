@@ -67,6 +67,7 @@ export class FortuneSheet extends FortuneSheetBase {
   private imageList: ImageList;
 
   private formulaRefList: IFormulaSI;
+  private disableInlineStringQuotePrefix: boolean;
 
   constructor(
     sheetName: string,
@@ -87,6 +88,7 @@ export class FortuneSheet extends FortuneSheetBase {
     this.sheetList = allFileOption.sheetList;
     this.imageList = allFileOption.imageList;
     this.hide = allFileOption.hide;
+    this.disableInlineStringQuotePrefix = allFileOption.disableInlineStringQuotePrefix || false;
 
     //Output
     this.name = sheetName;
@@ -566,7 +568,8 @@ export class FortuneSheet extends FortuneSheetBase {
             this.sharedStrings,
             this.mergeCells,
             this.sheetFile,
-            this.readXml
+            this.readXml,
+            this.disableInlineStringQuotePrefix
           );
           if (cellValue._borderObject != null) {
             if (this.config.borderInfo == null) {

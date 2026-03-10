@@ -2,7 +2,7 @@ import React from "react";
 import { transformExcelToFortune } from "../common/Transform";
 
 export const ImportHelper = (props: any) => {
-  const { setSheets, setKey, sheetRef, config } = props;
+  const { setSheets, setKey, sheetRef, config, options } = props;
   const acceptTypes = `${config.xlsx ? ".xlsx," : ""}${config.csv ? ".csv" : ""}`;
   return (
     <input
@@ -10,7 +10,7 @@ export const ImportHelper = (props: any) => {
       id="ImportHelper"
       accept={acceptTypes}
       onChange={async (e) => {
-        await transformExcelToFortune(e?.target?.files?.[0], setSheets, setKey, sheetRef);
+        await transformExcelToFortune(e?.target?.files?.[0], setSheets, setKey, sheetRef, options);
       }}
       hidden
     />

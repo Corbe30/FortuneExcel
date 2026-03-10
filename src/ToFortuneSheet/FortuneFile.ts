@@ -40,10 +40,12 @@ export class FortuneFile {
   private imageList: ImageList;
   private sheets?: FortuneSheet[];
   private info?: FortuneFileInfo;
+  private disableInlineStringQuotePrefix: boolean;
 
-  constructor(files: IuploadfileList, fileName: string) {
+  constructor(files: IuploadfileList, fileName: string, options?: { disableInlineStringQuotePrefix?: boolean }) {
     this.files = files;
     this.fileName = fileName;
+    this.disableInlineStringQuotePrefix = options?.disableInlineStringQuotePrefix || false;
     this.readXml = new ReadXml(files);
     this.getSheetNameList();
 
@@ -239,6 +241,7 @@ export class FortuneFile {
           drawingFile: drawingFile,
           drawingRelsFile: drawingRelsFile,
           hide: hide,
+          disableInlineStringQuotePrefix: this.disableInlineStringQuotePrefix,
         });
         this.columnWidthSet = [];
         this.rowHeightSet = [];

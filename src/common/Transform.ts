@@ -24,7 +24,8 @@ export const transformExcelToFortune = async (
     file: any,
     setSheets: any,
     setKey: any,
-    sheetRef: any
+    sheetRef: any,
+    options?: { disableInlineStringQuotePrefix?: boolean }
 ) => {
     let excelFile: ArrayBuffer;
     let fileName: string = file.name;
@@ -40,7 +41,7 @@ export const transformExcelToFortune = async (
     }
 
     const files = await new HandleZip(new File([excelFile], fileName)).unzipFile();
-    const fortuneFile = new FortuneFile(files, fileName);
+    const fortuneFile = new FortuneFile(files, fileName, options);
     fortuneFile.Parse();
 
     const lsh = fortuneFile.serialize();    

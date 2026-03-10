@@ -42,6 +42,7 @@ export class FortuneSheetCelldata extends FortuneSheetCelldataBase {
   private styles: IStyleCollections;
   private sharedStrings: Element[];
   private mergeCells: Element[];
+  private disableInlineStringQuotePrefix: boolean;
 
   constructor(
     cell: Element,
@@ -49,7 +50,8 @@ export class FortuneSheetCelldata extends FortuneSheetCelldataBase {
     sharedStrings: Element[],
     mergeCells: Element[],
     sheetFile: string,
-    ReadXml: ReadXml
+    ReadXml: ReadXml,
+    disableInlineStringQuotePrefix: boolean = false
   ) {
     //Private
     super();
@@ -59,6 +61,7 @@ export class FortuneSheetCelldata extends FortuneSheetCelldataBase {
     this.sharedStrings = sharedStrings;
     this.readXml = ReadXml;
     this.mergeCells = mergeCells;
+    this.disableInlineStringQuotePrefix = disableInlineStringQuotePrefix;
 
     let attrList = cell.attributeList;
     let r = attrList.r,
@@ -841,7 +844,7 @@ export class FortuneSheetCelldata extends FortuneSheetCelldataBase {
       }
       // to be confirmed
       else if (t == ST_CellType["InlineString"] && v != null) {
-        cellValue.v = "'" + value;
+        cellValue.v = this.disableInlineStringQuotePrefix ? value : "'" + value;
       } else {
         value = escapeCharacter(value);
         cellValue.v = value;
