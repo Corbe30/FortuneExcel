@@ -278,7 +278,8 @@ export class FortuneFile {
       let gap = def,
         istring = i.toString();
       if (istring in hidden) {
-        gap = 0;
+        sets.push(allGap);
+        continue;
       } else if (istring in lens) {
         gap = lens[istring];
       }
