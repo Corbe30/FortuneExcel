@@ -5,8 +5,13 @@ const path = require("node:path");
 const React = require("react");
 const ReactDOMClient = require("react-dom/client");
 const { JSDOM } = require("jsdom");
+const ExcelJS = require("exceljs");
+const JSZip = require("jszip");
 
-const { transformExcelToFortune } = require("../dist/main.js");
+const {
+  transformExcelToFortune,
+  transformFortuneToExcel,
+} = require("../dist/main.js");
 
 const fixturePath = path.resolve(__dirname, "fixtures", "xls_preview.xlsx");
 
@@ -169,6 +174,115 @@ test("transformExcelToFortune converts xls_preview.xlsx into Fortune sheets", as
 
   assert.equal(rowHeightCalls.length, 1);
   assert.deepEqual(rowHeightCalls[0], [sheet.config.rowlen || {}, { id: sheet.id }]);
+});
+
+test("an exported image can be imported again", async () => {
+  const imageSource =
+    "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==";
+  const grid = Array.from({ length: 10 }, () => Array(10).fill(null));
+  const sourceSheet = {
+    id: "roundtrip-sheet",
+    name: "Roundtrip",
+    data: grid,
+    config: {},
+    defaultColWidth: 73,
+    defaultRowHeight: 19,
+    images: [
+      {
+        id: "roundtrip-image",
+        src: imageSource,
+        left: 73,
+        top: 19,
+        width: 120,
+        height: 60,
+        originWidth: 120,
+        originHeight: 60,
+      },
+    ],
+  };
+  const exportRef = {
+    current: {
+      getAllSheets: () => [sourceSheet],
+    },
+  };
+
+  const exported = await transformFortuneToExcel(exportRef, "xlsx", false);
+  const exportedBuffer = Buffer.from(await exported.arrayBuffer());
+  const exportedFile = new File([exportedBuffer], "roundtrip.xlsx", {
+    type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  });
+
+  let importedSheets;
+  await transformExcelToFortune(
+    exportedFile,
+    (sheets) => {
+      importedSheets = sheets;
+    },
+    () => {},
+    { current: {} }
+  );
+
+  assert.equal(importedSheets.length, 1);
+  assert.equal(importedSheets[0].images.length, 1);
+  const [image] = importedSheets[0].images;
+  assert.equal(image.src, imageSource);
+  assert.equal(image.type, "2");
+  assert.equal(image.fromCol, 1);
+  assert.equal(image.fromRow, 1);
+  assert.equal(image.width, 120);
+  assert.equal(image.height, 60);
+});
+
+test("an absolute-anchor image is imported with its pixel bounds", async () => {
+  const imageSource =
+    "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==";
+  const workbook = new ExcelJS.Workbook();
+  const worksheet = workbook.addWorksheet("Absolute");
+  const imageId = workbook.addImage({
+    base64: imageSource,
+    extension: "gif",
+  });
+  worksheet.addImage(imageId, {
+    tl: { col: 0, row: 0 },
+    ext: { width: 120, height: 60 },
+  });
+
+  const zip = await JSZip.loadAsync(await workbook.xlsx.writeBuffer());
+  const drawingPath = "xl/drawings/drawing1.xml";
+  const oneCellDrawing = await zip.file(drawingPath).async("string");
+  const absoluteDrawing = oneCellDrawing
+    .replace(/<xdr:oneCellAnchor[^>]*>/, "<xdr:absoluteAnchor>")
+    .replace(
+      /<xdr:from>[\s\S]*?<\/xdr:from>/,
+      '<xdr:pos x="914400" y="457200"/>'
+    )
+    .replace("</xdr:oneCellAnchor>", "</xdr:absoluteAnchor>");
+  zip.file(drawingPath, absoluteDrawing);
+
+  const file = new File(
+    [await zip.generateAsync({ type: "nodebuffer" })],
+    "absolute-anchor.xlsx",
+    {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    }
+  );
+
+  let importedSheets;
+  await transformExcelToFortune(
+    file,
+    (sheets) => {
+      importedSheets = sheets;
+    },
+    () => {},
+    { current: {} }
+  );
+
+  const [image] = importedSheets[0].images;
+  assert.equal(image.type, "3");
+  assert.equal(image.left, 96);
+  assert.equal(image.top, 48);
+  assert.equal(image.width, 120);
+  assert.equal(image.height, 60);
 });
 
 test("converted xls_preview.xlsx sheets can be mounted in Workbook", async () => {

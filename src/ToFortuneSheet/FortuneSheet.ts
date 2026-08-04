@@ -291,136 +291,168 @@ export class FortuneSheet extends FortuneSheetBase {
     let drawingFile = allFileOption.drawingFile,
       drawingRelsFile = allFileOption.drawingRelsFile;
     if (drawingFile != null && drawingRelsFile != null) {
-      let twoCellAnchors = this.readXml.getElementsByTagName(
-        "xdr:twoCellAnchor",
-        drawingFile
-      );
-
-      if (twoCellAnchors != null && twoCellAnchors.length > 0) {
-        for (let i = 0; i < twoCellAnchors.length; i++) {
-          let twoCellAnchor = twoCellAnchors[i];
-          let editAs = getXmlAttibute(
-            twoCellAnchor.attributeList,
-            "editAs",
-            "twoCell"
-          );
-
-          let xdrFroms = twoCellAnchor.getInnerElements("xdr:from"),
-            xdrTos = twoCellAnchor.getInnerElements("xdr:to");
-
-          let xdr_blipfills = twoCellAnchor.getInnerElements("a:blip");
-          if (
-            xdrFroms != null &&
-            xdr_blipfills != null &&
-            xdrFroms.length > 0 &&
-            xdr_blipfills.length > 0
-          ) {
-            let xdrFrom = xdrFroms[0],
-              xdrTo = xdrTos[0],
-              xdr_blipfill = xdr_blipfills[0];
-
-            let rembed = getXmlAttibute(
-              xdr_blipfill.attributeList,
-              "r:embed",
-              null
-            );
-
-            let imageObject = this.getBase64ByRid(rembed, drawingRelsFile);
-
-            // let aoff = xdr_xfrm.getInnerElements("a:off"), aext = xdr_xfrm.getInnerElements("a:ext");
-
-            // if(aoff!=null && aext!=null && aoff.length>0 && aext.length>0){
-            //     let aoffAttribute = aoff[0].attributeList, aextAttribute = aext[0].attributeList;
-            //     let x = getXmlAttibute(aoffAttribute, "x", null);
-            //     let y = getXmlAttibute(aoffAttribute, "y", null);
-
-            //     let cx = getXmlAttibute(aextAttribute, "cx", null);
-            //     let cy = getXmlAttibute(aextAttribute, "cy", null);
-
-            //     if(x!=null && y!=null && cx!=null && cy!=null && imageObject !=null){
-            // let x_n = getPxByEMUs(parseInt(x), "c"),y_n = getPxByEMUs(parseInt(y));
-            // let cx_n = getPxByEMUs(parseInt(cx), "c"),cy_n = getPxByEMUs(parseInt(cy));
-
-            let x_n = 0,
-              y_n = 0;
-            let cx_n = 0,
-              cy_n = 0;
-
-            imageObject.fromCol = this.getXdrValue(
-              xdrFrom.getInnerElements("xdr:col")
-            );
-            imageObject.fromColOff = getPxByEMUs(
-              this.getXdrValue(xdrFrom.getInnerElements("xdr:colOff"))
-            );
-            imageObject.fromRow = this.getXdrValue(
-              xdrFrom.getInnerElements("xdr:row")
-            );
-            imageObject.fromRowOff = getPxByEMUs(
-              this.getXdrValue(xdrFrom.getInnerElements("xdr:rowOff"))
-            );
-
-            imageObject.toCol = this.getXdrValue(
-              xdrTo.getInnerElements("xdr:col")
-            );
-            imageObject.toColOff = getPxByEMUs(
-              this.getXdrValue(xdrTo.getInnerElements("xdr:colOff"))
-            );
-            imageObject.toRow = this.getXdrValue(
-              xdrTo.getInnerElements("xdr:row")
-            );
-            imageObject.toRowOff = getPxByEMUs(
-              this.getXdrValue(xdrTo.getInnerElements("xdr:rowOff"))
-            );
-
-            imageObject.originWidth = cx_n;
-            imageObject.originHeight = cy_n;
-
-            if (editAs == "absolute") {
-              imageObject.type = "3";
-            } else if (editAs == "oneCell") {
-              imageObject.type = "2";
-            } else {
-              imageObject.type = "1";
-            }
-
-            imageObject.isFixedPos = false;
-            imageObject.fixedLeft = 0;
-            imageObject.fixedTop = 0;
-
-            let imageBorder: IfortuneImageBorder = {
-              color: "#000",
-              radius: 0,
-              style: "solid",
-              width: 0,
-            };
-            imageObject.border = imageBorder;
-
-            let imageCrop: IfortuneImageCrop = {
-              height: cy_n,
-              offsetLeft: 0,
-              offsetTop: 0,
-              width: cx_n,
-            };
-            imageObject.crop = imageCrop;
-
-            let imageDefault: IfortuneImageDefault = {
-              height: cy_n,
-              left: x_n,
-              top: y_n,
-              width: cx_n,
-            };
-            imageObject.default = imageDefault;
-
-            if (this.images == null) {
-              this.images = {};
-            }
-            this.images[generateRandomIndex("image")] = imageObject;
-            //     }
-            // }
-          }
-        }
-      }
+      this.parseImages(drawingFile, drawingRelsFile);
     }
+  }
+
+  private parseImages(drawingFile: string, drawingRelsFile: string) {
+    const anchors = this.readXml.getElementsByTagName(
+      "xdr:twoCellAnchor|xdr:oneCellAnchor|xdr:absoluteAnchor",
+      drawingFile
+    );
+
+    for (const anchor of anchors) {
+      const blips = anchor.getInnerElements("a:blip");
+      if (blips == null || blips.length === 0) {
+        continue;
+      }
+
+      const relationshipId = getXmlAttibute(
+        blips[0].attributeList,
+        "r:embed",
+        null
+      );
+      const imageObject: any = this.getBase64ByRid(
+        relationshipId,
+        drawingRelsFile
+      );
+      if (imageObject == null) {
+        continue;
+      }
+
+      if (anchor.elementString.indexOf("<xdr:absoluteAnchor") === 0) {
+        this.setAbsoluteImagePosition(imageObject, anchor);
+      } else {
+        const from = anchor.getInnerElements("xdr:from");
+        if (from == null || from.length === 0) {
+          continue;
+        }
+        this.setImageStartPosition(imageObject, from[0]);
+
+        if (anchor.elementString.indexOf("<xdr:oneCellAnchor") === 0) {
+          this.setOneCellImageSize(imageObject, anchor);
+        } else if (!this.setTwoCellImageEndPosition(imageObject, anchor)) {
+          continue;
+        }
+
+        const defaultEditAs =
+          anchor.elementString.indexOf("<xdr:twoCellAnchor") === 0
+            ? "twoCell"
+            : "oneCell";
+        imageObject.type = this.getImageType(
+          getXmlAttibute(anchor.attributeList, "editAs", defaultEditAs)
+        );
+      }
+
+      this.initializeImageDisplayProperties(imageObject);
+      if (this.images == null) {
+        this.images = {};
+      }
+      this.images[generateRandomIndex("image")] = imageObject;
+    }
+  }
+
+  private setImageStartPosition(imageObject: any, from: Element) {
+    imageObject.fromCol = this.getXdrValue(from.getInnerElements("xdr:col"));
+    imageObject.fromColOff = getPxByEMUs(
+      this.getXdrValue(from.getInnerElements("xdr:colOff"))
+    );
+    imageObject.fromRow = this.getXdrValue(from.getInnerElements("xdr:row"));
+    imageObject.fromRowOff = getPxByEMUs(
+      this.getXdrValue(from.getInnerElements("xdr:rowOff"))
+    );
+  }
+
+  private setTwoCellImageEndPosition(
+    imageObject: any,
+    anchor: Element
+  ): boolean {
+    const to = anchor.getInnerElements("xdr:to");
+    if (to == null || to.length === 0) {
+      return false;
+    }
+
+    imageObject.toCol = this.getXdrValue(to[0].getInnerElements("xdr:col"));
+    imageObject.toColOff = getPxByEMUs(
+      this.getXdrValue(to[0].getInnerElements("xdr:colOff"))
+    );
+    imageObject.toRow = this.getXdrValue(to[0].getInnerElements("xdr:row"));
+    imageObject.toRowOff = getPxByEMUs(
+      this.getXdrValue(to[0].getInnerElements("xdr:rowOff"))
+    );
+    return true;
+  }
+
+  private setOneCellImageSize(imageObject: any, anchor: Element) {
+    const ext = anchor.getInnerElements("xdr:ext");
+    imageObject.originWidth = getPxByEMUs(this.getXdrAttribute(ext, "cx"));
+    imageObject.originHeight = getPxByEMUs(this.getXdrAttribute(ext, "cy"));
+  }
+
+  private setAbsoluteImagePosition(imageObject: any, anchor: Element) {
+    const pos = anchor.getInnerElements("xdr:pos");
+    const ext = anchor.getInnerElements("xdr:ext");
+    const left = getPxByEMUs(this.getXdrAttribute(pos, "x"));
+    const top = getPxByEMUs(this.getXdrAttribute(pos, "y"));
+    const width = getPxByEMUs(this.getXdrAttribute(ext, "cx"));
+    const height = getPxByEMUs(this.getXdrAttribute(ext, "cy"));
+
+    imageObject.originWidth = width;
+    imageObject.originHeight = height;
+    imageObject.default = { left, top, width, height };
+    imageObject.type = "3";
+  }
+
+  private initializeImageDisplayProperties(imageObject: any) {
+    const width = imageObject.originWidth || 0;
+    const height = imageObject.originHeight || 0;
+    imageObject.isFixedPos = false;
+    imageObject.fixedLeft = 0;
+    imageObject.fixedTop = 0;
+
+    const imageBorder: IfortuneImageBorder = {
+      color: "#000",
+      radius: 0,
+      style: "solid",
+      width: 0,
+    };
+    imageObject.border = imageBorder;
+
+    const imageCrop: IfortuneImageCrop = {
+      height,
+      offsetLeft: 0,
+      offsetTop: 0,
+      width,
+    };
+    imageObject.crop = imageCrop;
+
+    if (imageObject.default == null) {
+      const imageDefault: IfortuneImageDefault = {
+        height,
+        left: 0,
+        top: 0,
+        width,
+      };
+      imageObject.default = imageDefault;
+    }
+  }
+
+  private getImageType(editAs: string): string {
+    if (editAs === "absolute") {
+      return "3";
+    }
+    if (editAs === "oneCell") {
+      return "2";
+    }
+    return "1";
+  }
+
+  private getXdrAttribute(elements: Element[], attribute: string): number {
+    if (elements == null || elements.length === 0) {
+      return null;
+    }
+    const value = getXmlAttibute(elements[0].attributeList, attribute, null);
+    return value == null ? null : parseInt(value);
   }
 
   private getXdrValue(ele: Element[]): number {

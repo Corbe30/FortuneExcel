@@ -293,6 +293,9 @@ export class FortuneFile {
     let images = sheet.images,
       defaultColWidth = sheet.defaultColWidth,
       defaultRowHeight = sheet.defaultRowHeight;
+    if (images == null) {
+      return;
+    }
     let colhidden = {};
     if (sheet.config.colhidden) {
       colhidden = sheet.config.colhidden;
@@ -330,6 +333,11 @@ export class FortuneFile {
       let cx_n = 0,
         cy_n = 0;
 
+      // Absolute anchors already contain their pixel position and size.
+      if (fromCol == null || fromRow == null) {
+        continue;
+      }
+
       if (fromCol >= this.columnWidthSet.length) {
         this.extendArray(
           fromCol,
@@ -362,47 +370,44 @@ export class FortuneFile {
       }
       y_n = y_n + fromRowOff;
 
-      if (toCol >= this.columnWidthSet.length) {
-        this.extendArray(
-          toCol,
-          this.columnWidthSet,
-          defaultColWidth,
-          colhidden,
-          columnlen
-        );
-      }
-      if (toCol == 0) {
-        cx_n = 0;
+      if (toCol == null || toRow == null) {
+        // One-cell anchors store their size in xdr:ext rather than xdr:to.
+        cx_n = imageObject.originWidth || 0;
+        cy_n = imageObject.originHeight || 0;
       } else {
-        cx_n = this.columnWidthSet[toCol - 1];
-      }
-      cx_n = cx_n + toColOff - x_n;
+        if (toCol >= this.columnWidthSet.length) {
+          this.extendArray(
+            toCol,
+            this.columnWidthSet,
+            defaultColWidth,
+            colhidden,
+            columnlen
+          );
+        }
+        if (toCol == 0) {
+          cx_n = 0;
+        } else {
+          cx_n = this.columnWidthSet[toCol - 1];
+        }
+        cx_n = cx_n + toColOff - x_n;
 
-      if (toRow >= this.rowHeightSet.length) {
-        this.extendArray(
-          toRow,
-          this.rowHeightSet,
-          defaultRowHeight,
-          rowhidden,
-          rowlen
-        );
-      }
-      if (toRow == 0) {
-        cy_n = 0;
-      } else {
-        cy_n = this.rowHeightSet[toRow - 1];
-      }
+        if (toRow >= this.rowHeightSet.length) {
+          this.extendArray(
+            toRow,
+            this.rowHeightSet,
+            defaultRowHeight,
+            rowhidden,
+            rowlen
+          );
+        }
+        if (toRow == 0) {
+          cy_n = 0;
+        } else {
+          cy_n = this.rowHeightSet[toRow - 1];
+        }
 
-      cy_n = cy_n + toRowOff - y_n;
-
-      console.log(defaultColWidth, colhidden, columnlen);
-      console.log(fromCol, this.columnWidthSet[fromCol], fromColOff);
-      console.log(
-        toCol,
-        this.columnWidthSet[toCol],
-        toColOff,
-        JSON.stringify(this.columnWidthSet)
-      );
+        cy_n = cy_n + toRowOff - y_n;
+      }
 
       imageObject.originWidth = cx_n;
       imageObject.originHeight = cy_n;
