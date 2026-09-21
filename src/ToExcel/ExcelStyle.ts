@@ -11,17 +11,32 @@ const formatHyperlink = (address: string) => {
   return `#\'${sheetCell[0]}\'!${sheetCell[1] || "A1"}`;
 };
 
+// Inverse of the pixel conversions used by the XLSX importer.
+const columnPixelsToExcelWidth = (pixels: number) => (pixels - 5) / 8 + 0.83;
+const rowPixelsToPoints = (pixels: number) => pixels * (72 / 96);
+
 var setStyleAndValue = function (table: any, worksheet: ExcelJS.Worksheet) {
   const cellArr = table?.data;
   if (!Array.isArray(cellArr)) return;
 
+  worksheet.properties.defaultColWidth = columnPixelsToExcelWidth(
+    table.defaultColWidth ?? 73
+  );
+  worksheet.properties.defaultRowHeight = rowPixelsToPoints(
+    table.defaultRowHeight ?? 19
+  );
+
   cellArr.forEach(function (row, rowid) {
     const dbrow = worksheet.getRow(rowid + 1);
-    dbrow.height = (table.config?.rowlen?.[rowid] || 19) / 1.2;
+    const rowHeight =
+      table.config?.rowlen?.[rowid] ?? table.defaultRowHeight ?? 19;
+    dbrow.height = rowPixelsToPoints(rowHeight);
     row.every(function (cell: any, columnid: any) {
       if (rowid == 0) {
         const dobCol = worksheet.getColumn(columnid + 1);
-        dobCol.width = (table.config?.columnlen?.[columnid] || 73) / 8;
+        const columnWidth =
+          table.config?.columnlen?.[columnid] ?? table.defaultColWidth ?? 73;
+        dobCol.width = columnPixelsToExcelWidth(columnWidth);
       }
       if (!cell) return true;
       let fill = fillConvert(cell.bg);
