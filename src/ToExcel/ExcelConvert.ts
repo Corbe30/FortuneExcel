@@ -20,8 +20,45 @@ var fillConvert = function (bg: string): ExcelJS.Fill {
   return fill;
 };
 
+const DEFAULT_FONT_NAME = "Calibri";
+
+const luckyFontNames: Record<number, string> = {
+  0: "微软雅黑",
+  1: "宋体（Song）",
+  2: "黑体（ST Heiti）",
+  3: "楷体（ST Kaiti）",
+  4: "仿宋（ST FangSong）",
+  5: "新宋体（ST Song）",
+  6: "华文新魏",
+  7: "华文行楷",
+  8: "华文隶书",
+  9: "Arial",
+  10: "Times New Roman",
+  11: "Tahoma",
+  12: "Verdana",
+};
+
+const resolveFontName = (ff: string | number | undefined | null): string => {
+  if (ff === undefined || ff === null || ff === "") {
+    return DEFAULT_FONT_NAME;
+  }
+
+  const numericIndex =
+    typeof ff === "number"
+      ? ff
+      : /^(0|[1-9]\d*)$/.test(ff.trim())
+      ? Number(ff)
+      : NaN;
+  if (!Number.isNaN(numericIndex) && luckyFontNames[numericIndex]) {
+    return luckyFontNames[numericIndex];
+  }
+
+  const name = String(ff).trim();
+  return name || DEFAULT_FONT_NAME;
+};
+
 var fontConvert = function (
-  ff = "",
+  ff: string | number = "",
   fc = "#000000",
   bl = 0,
   it = 0,
@@ -30,35 +67,18 @@ var fontConvert = function (
   ul = 0
 ) {
   // luckysheet：ff(样式), fc(颜色), bl(粗体), it(斜体), fs(大小), cl(删除线), ul(下划线)
-  const luckyToExcel = {
-    0: "微软雅黑",
-    1: "宋体（Song）",
-    2: "黑体（ST Heiti）",
-    3: "楷体（ST Kaiti）",
-    4: "仿宋（ST FangSong）",
-    5: "新宋体（ST Song）",
-    6: "华文新魏",
-    7: "华文行楷",
-    8: "华文隶书",
-    9: "Arial",
-    10: "Times New Roman ",
-    11: "Tahoma ",
-    12: "Verdana",
-    num2bl: function (num: number) {
-      return num === 0 ? false : true;
-    },
-  };
+  const num2bl = (num: number) => num !== 0;
   let color = (fc + "").indexOf("rgb") > -1 ? rgb2hex(fc) : fc;
 
   let font = {
-    name: ff,
+    name: resolveFontName(ff),
     family: 1,
     size: fs,
     color: { argb: color.replace("#", "") },
-    bold: luckyToExcel.num2bl(bl),
-    italic: luckyToExcel.num2bl(it),
-    underline: luckyToExcel.num2bl(ul),
-    strike: luckyToExcel.num2bl(cl),
+    bold: num2bl(bl),
+    italic: num2bl(it),
+    underline: num2bl(ul),
+    strike: num2bl(cl),
   };
 
   return font;
