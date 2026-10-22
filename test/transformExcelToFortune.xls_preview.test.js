@@ -551,3 +551,30 @@ test("converted xls_preview.xlsx sheets can be mounted in Workbook", async () =>
     global.DOMParser = previousGlobals.DOMParser;
   }
 });
+
+test("xlsx export uses a named default font when a cell has no font family", async () => {
+  const sourceSheet = {
+    id: "empty-font-sheet",
+    name: "Empty font",
+    data: [[{ v: "a", ct: { t: "s" } }]],
+    config: {},
+    defaultColWidth: 73,
+    defaultRowHeight: 19,
+  };
+
+  const exported = await transformFortuneToExcel(
+    { current: { getAllSheets: () => [sourceSheet] } },
+    "xlsx",
+    false
+  );
+  const buffer = Buffer.from(await exported.arrayBuffer());
+  const zip = await JSZip.loadAsync(buffer);
+  const styles = await zip.file("xl/styles.xml").async("string");
+
+  assert.doesNotMatch(styles, /<name val="\s*"\s*\/>/);
+  assert.match(styles, /<name val="Calibri"\s*\/>/);
+
+  const workbook = new ExcelJS.Workbook();
+  await workbook.xlsx.load(buffer);
+  assert.equal(workbook.worksheets[0].getCell(1, 1).font?.name, "Calibri");
+});

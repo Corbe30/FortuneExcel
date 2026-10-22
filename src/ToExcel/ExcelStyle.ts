@@ -41,7 +41,7 @@ var setStyleAndValue = function (table: any, worksheet: ExcelJS.Worksheet) {
       if (!cell) return true;
       let fill = fillConvert(cell.bg);
       let font = fontConvert(
-        cell.ff as string,
+        cell.ff,
         cell.fc,
         cell.bl,
         cell.it,
