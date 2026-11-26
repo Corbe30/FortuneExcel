@@ -578,3 +578,28 @@ test("xlsx export uses a named default font when a cell has no font family", asy
   await workbook.xlsx.load(buffer);
   assert.equal(workbook.worksheets[0].getCell(1, 1).font?.name, "Calibri");
 });
+
+test("a hyperlink's address is imported without its XML escapes", async () => {
+  const address = "https://example.com/page?id=1&view=2";
+  const workbook = new ExcelJS.Workbook();
+  workbook.addWorksheet("Links").getCell("A1").value = {
+    text: "Link",
+    hyperlink: address,
+  };
+  const buffer = Buffer.from(await workbook.xlsx.writeBuffer());
+  const file = new File([buffer], "links.xlsx", {
+    type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  });
+
+  let importedSheets;
+  await transformExcelToFortune(
+    file,
+    (sheets) => {
+      importedSheets = sheets;
+    },
+    () => {},
+    { current: {} }
+  );
+
+  assert.equal(importedSheets[0].hyperlink["0_0"].linkAddress, address);
+});
