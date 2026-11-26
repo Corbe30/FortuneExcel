@@ -22,6 +22,7 @@
 import { FortuneSheetCelldata } from "./FortuneCell";
 import { IattributeList } from "../common/ICommon";
 import {
+  escapeCharacter,
   getXmlAttibute,
   getColumnWidthPixel,
   fromulaRef,
@@ -844,9 +845,10 @@ export class FortuneSheet extends FortuneSheetBase {
       let attrList = row.attributeList;
       let ref = getXmlAttibute(attrList, "ref", null),
         refArr = getMultiSequenceToNum(ref),
-        _display = getXmlAttibute(attrList, "display", null),
-        _address = getXmlAttibute(attrList, "location", null),
-        _tooltip = getXmlAttibute(attrList, "tooltip", null);
+        // Attribute values keep their XML escapes: "&" arrives as "&amp;".
+        _display = escapeCharacter(getXmlAttibute(attrList, "display", null)),
+        _address = escapeCharacter(getXmlAttibute(attrList, "location", null)),
+        _tooltip = escapeCharacter(getXmlAttibute(attrList, "tooltip", null));
       let _type: IfortunesheetHyperlinkType = _address
         ? "cellrange"
         : "webpage";
@@ -865,7 +867,7 @@ export class FortuneSheet extends FortuneSheetBase {
         );
 
         if (findRid) {
-          _address = findRid.attributeList["Target"];
+          _address = escapeCharacter(findRid.attributeList["Target"]);
           const type = findRid.attributeList[
             "TargetMode"
           ]?.toLocaleLowerCase();
